@@ -25,26 +25,26 @@ const Modal = ({
   presentationStyle,
   onRequestClose
 }: Props) => {
-  if (!visible) {
-    return null;
-  }
-  
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
+    const backHandler = visible ? BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
-        if (typeof onRequestClose === "function") {
+        if (visible && typeof onRequestClose === "function") {
           onRequestClose();
         }
 
         return true;
       }
-    );
+    ) : null;
 
     return () => {
-      backHandler.remove();
+      backHandler?.remove();
     };
-  }, []);
+  }, [visible]);
+
+  if (!visible) {
+    return null;
+  }
 
   const statusBarHidden = presentationStyle === "overFullScreen";
   const statusBarStateStyle =

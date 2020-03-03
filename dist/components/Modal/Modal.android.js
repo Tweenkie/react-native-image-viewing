@@ -8,20 +8,21 @@
 import React, { useEffect } from "react";
 import { BackHandler, View, StyleSheet, StatusBar } from "react-native";
 const Modal = ({ visible, children, presentationStyle, onRequestClose }) => {
-    if (!visible) {
-        return null;
-    }
     useEffect(() => {
-        const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-            if (typeof onRequestClose === "function") {
+        const backHandler = visible ? BackHandler.addEventListener("hardwareBackPress", () => {
+            if (visible && typeof onRequestClose === "function") {
                 onRequestClose();
             }
             return true;
-        });
+        }) : null;
         return () => {
-            backHandler.remove();
+            var _a;
+            (_a = backHandler) === null || _a === void 0 ? void 0 : _a.remove();
         };
-    }, []);
+    }, [visible]);
+    if (!visible) {
+        return null;
+    }
     const statusBarHidden = presentationStyle === "overFullScreen";
     const statusBarStateStyle = presentationStyle === "overFullScreen"
         ? styles.overFullscreen
