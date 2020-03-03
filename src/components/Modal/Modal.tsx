@@ -6,6 +6,72 @@
  *
  */
 
-import { Modal } from "react-native";
+import React, { useEffect } from "react";
+import {
+  BackHandler,
+  View,
+  StyleSheet,
+  StatusBar,
+  ModalProps
+} from "react-native";
+
+type Props = ModalProps & {
+  children: JSX.Element;
+};
+
+const Modal = ({
+  visible,
+  children,
+  presentationStyle,
+  onRequestClose
+}: Props) => {
+  useEffect(() => {
+    const backHandler = visible ? BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (visible && typeof onRequestClose === "function") {
+          onRequestClose();
+        }
+
+        return true;
+      }
+    ) : null;
+
+    return () => {
+      backHandler?.remove();
+    };
+  }, [visible]);
+
+  if (!visible) {
+    return null;
+  }
+
+  const statusBarHidden = presentationStyle === "overFullScreen";
+  const statusBarStateStyle =
+    presentationStyle === "overFullScreen"
+      ? styles.overFullscreen
+      : styles.defaultStyle;
+
+  return (
+    <>
+      {statusBarHidden && <StatusBar hidden />}
+      <View style={[styles.root, statusBarStateStyle]}>{children}</View>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  root: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1000,
+    backgroundColor: "transparent"
+  },
+  overFullscreen: {
+    top: 0
+  },
+  defaultStyle: {
+    top: 0
+  }
+});
 
 export default Modal;

@@ -5,5 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { Modal } from "react-native";
+/// <reference types="react" />
+import { ModalProps } from "react-native";
+declare type Props = ModalProps & {
+    children: JSX.Element;
+};
+declare const Modal: ({ visible, children, presentationStyle, onRequestClose }: Props) => JSX.Element | null;
 export default Modal;
